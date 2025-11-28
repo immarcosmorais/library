@@ -1,0 +1,1 @@
+ALTER TABLE borrowings ADD CONSTRAINT uk_borrowings_book_id UNIQUE (book_id);

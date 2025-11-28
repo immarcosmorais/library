@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS authors (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    created_at DATETIME,
+    updated_at DATETIME,
+    name VARCHAR(255) NOT NULL,
+    birth_date DATE
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

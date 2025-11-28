@@ -1,0 +1,1 @@
+ALTER TABLE reservations ADD CONSTRAINT uk_reservations_book_id UNIQUE (book_id);
