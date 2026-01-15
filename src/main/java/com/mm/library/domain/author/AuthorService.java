@@ -45,6 +45,9 @@ public class AuthorService implements BaseCRUDService<Author, AuthorBody> {
     @Transactional
     public void delete(Long id) {
         Author authorToBeDeleted = authorRepository.getReferenceById(id);
+        if (authorToBeDeleted.isDeleted()) {
+            throw new EntityNotFoundException(String.format("Author with id %d not found", id));
+        }
         authorToBeDeleted.setDeleted(true);
         authorRepository.save(authorToBeDeleted);
     }

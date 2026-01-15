@@ -4,10 +4,7 @@ import com.mm.library.common.AbstractEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
@@ -17,6 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Table(name = "authors")
 @Entity(name = "Author")
+@Builder
 public class Author extends AbstractEntity {
 
     private String name;
