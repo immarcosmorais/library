@@ -1,6 +1,7 @@
-package com.mm.library.domain.author;
+package com.mm.library.domain.publisher;
 
-import com.mm.library.util.AuthorCreator;
+
+import com.mm.library.util.PublisherCreator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,25 +19,25 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@DisplayName("Tests for AuthorService")
-class AuthorServiceTest {
+@DisplayName("Tests for PublisherService")
+class PublisherServiceTest {
 
     @InjectMocks
-    private AuthorService service;
+    private PublisherService service;
+
     @Mock
-    private AuthorRepository repository;
+    private PublisherRepository repository;
 
     @BeforeEach
     void setUp() {
-        Author entity = AuthorCreator.createAuthorToBeSaved();
-        PageImpl<Author> entityPage = new PageImpl<>(java.util.List.of(entity));
+        Publisher entity = PublisherCreator.createPublisherToBeSaved();
+        PageImpl<Publisher> entityPage = new PageImpl<>(java.util.List.of(entity));
         BDDMockito.when(repository.findAllByDeletedFalse(ArgumentMatchers.any(Pageable.class))).thenReturn(entityPage);
-        BDDMockito.when(repository.save(ArgumentMatchers.any(Author.class))).thenReturn(entity);
+        BDDMockito.when(repository.save(ArgumentMatchers.any(Publisher.class))).thenReturn(entity);
         BDDMockito.when(repository.findByIdAndDeletedFalse(ArgumentMatchers.anyLong())).thenReturn(Optional.of(entity));
         BDDMockito.when(repository.getReferenceById(ArgumentMatchers.anyLong())).thenReturn(entity);
-        BDDMockito.doNothing().when(repository).delete(ArgumentMatchers.any(Author.class));
+        BDDMockito.doNothing().when(repository).delete(ArgumentMatchers.any(Publisher.class));
     }
-
 
     @AfterEach
     void tearDown() {
@@ -44,62 +45,62 @@ class AuthorServiceTest {
     }
 
     @Test
-    @DisplayName("Save author when success")
-    void saveAuthorWhenSuccess() {
-        AuthorBody body = AuthorCreator.createAuthorBody();
-        Author savedAuthor = service.save(body);
-        assertNotNull(savedAuthor);
-        assertEquals(body.name(), savedAuthor.getName());
+    @DisplayName("Save publisher when success")
+    void savePublisherWhenSuccess() {
+        PublisherBody body = PublisherCreator.createPublisherBody();
+        Publisher saved = service.save(body);
+        assertNotNull(saved);
+        assertEquals(body.name(), saved.getName());
     }
 
     @Test
-    @DisplayName("Find all authors when success")
-    void findAllAuthorWhenSuccess() {
+    @DisplayName("Find all publishers when success")
+    void findAllPublisherWhenSuccess() {
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Author> page = service.findAll(pageable);
+        Page<Publisher> page = service.findAll(pageable);
         assertNotNull(page);
         assertFalse(page.isEmpty());
         assertEquals(1, page.getTotalElements());
     }
 
     @Test
-    @DisplayName("Find author by id when success")
-    void findAuthorByIdWhenSuccess() {
-        Author author = service.findById(1L);
-        assertNotNull(author);
+    @DisplayName("Find publisher by id when success")
+    void findPublisherByIdWhenSuccess() {
+        Publisher publisher = service.findById(1L);
+        assertNotNull(publisher);
     }
 
     @Test
-    @DisplayName("Find author by id when not found")
-    void findAuthorByIdWhenNotFound() {
+    @DisplayName("Find publisher by id when not found")
+    void findPublisherByIdWhenNotFound() {
         BDDMockito.when(repository.findByIdAndDeletedFalse(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.empty());
         Exception exception = assertThrows(Exception.class, () -> {
             service.findById(1L);
         });
-        String expectedMessage = "Author with id 1 not found";
+        String expectedMessage = "Publisher with id 1 not found";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test
-    @DisplayName("Update author when success")
-    void updateAuthorWhenSuccess() {
-        AuthorBody body = AuthorCreator.createAuthorBody();
-        Author savedAuthor = service.update(1L, body);
-        assertNotNull(savedAuthor);
-        assertEquals(body.name(), savedAuthor.getName());
+    @DisplayName("Update publisher when success")
+    void updatePublisherWhenSuccess() {
+        PublisherBody body = PublisherCreator.createPublisherBody();
+        Publisher publisher = service.update(1L, body);
+        assertNotNull(publisher);
+        assertEquals(body.name(), publisher.getName());
     }
 
     @Test
-    @DisplayName("Delete author when success")
-    void deleteAuthorWhenSuccess() {
+    @DisplayName("Delete publisher when success")
+    void deletePublisherWhenSuccess() {
         assertDoesNotThrow(() -> service.delete(1L));
     }
 
     @Test
-    @DisplayName("Destroy author when success")
-    void destroyAuthorWhenSuccess() {
+    @DisplayName("Destroy publisher when success")
+    void destroyPublisherWhenSuccess() {
         assertDoesNotThrow(() -> service.destroy(1L));
     }
 }

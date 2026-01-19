@@ -1,10 +1,11 @@
 package com.mm.library.controller;
 
-import com.mm.library.domain.author.Author;
-import com.mm.library.domain.author.AuthorBody;
 import com.mm.library.domain.author.AuthorDTO;
-import com.mm.library.domain.author.AuthorService;
-import com.mm.library.util.AuthorCreator;
+import com.mm.library.domain.publisher.Publisher;
+import com.mm.library.domain.publisher.PublisherBody;
+import com.mm.library.domain.publisher.PublisherDTO;
+import com.mm.library.domain.publisher.PublisherService;
+import com.mm.library.util.PublisherCreator;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -20,25 +21,25 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 
 @ExtendWith(SpringExtension.class)
-@DisplayName("Tests for AuthorController")
-class AuthorControllerTest {
+@DisplayName("Tests for PublisherController")
+class PublisherControllerTest {
 
     @InjectMocks
-    private AuthorController controller;
+    private PublisherController controller;
 
     @Mock
-    private AuthorService service;
+    private PublisherService service;
 
     @BeforeEach
     void setUp() {
-        Author validEntity = AuthorCreator.createAuthorToBeSaved();
-        PageImpl<Author> authorPage = new PageImpl<>(List.of(validEntity));
-        BDDMockito.when(service.findAll(ArgumentMatchers.any(Pageable.class))).thenReturn(authorPage);
-        BDDMockito.when(service.findById(ArgumentMatchers.anyLong())).thenReturn(validEntity);
-        BDDMockito.when(service.update(ArgumentMatchers.anyLong(), ArgumentMatchers.any(AuthorBody.class)))
-                .thenReturn(validEntity);
+        Publisher validPublisher = PublisherCreator.createPublisherToBeSaved();
+        PageImpl<Publisher> publisherPage = new PageImpl<>(List.of(validPublisher));
+        BDDMockito.when(service.findAll(ArgumentMatchers.any(Pageable.class))).thenReturn(publisherPage);
+        BDDMockito.when(service.findById(ArgumentMatchers.anyLong())).thenReturn(validPublisher);
+        BDDMockito.when(service.update(ArgumentMatchers.anyLong(), ArgumentMatchers.any(PublisherBody.class)))
+                .thenReturn(validPublisher);
         BDDMockito.doNothing().when(service).delete(ArgumentMatchers.anyLong());
-        BDDMockito.when(service.save(ArgumentMatchers.any(AuthorBody.class))).thenReturn(validEntity);
+        BDDMockito.when(service.save(ArgumentMatchers.any(PublisherBody.class))).thenReturn(validPublisher);
     }
 
     @AfterEach
@@ -47,22 +48,23 @@ class AuthorControllerTest {
     }
 
     @Test
-    @DisplayName("Save author when success")
-    void saveAuthorWhenSuccess() {
-        AuthorBody body = AuthorCreator.createAuthorBody();
+    @DisplayName("Save publisher when success")
+    void savePublisherWhenSuccess() {
+        PublisherBody body = PublisherCreator.createPublisherBody();
         UriComponentsBuilder uriBuilder = UriComponentsBuilder
                 .fromUriString("http://localhost:8080");
         ResponseEntity<?> response = controller.save(body, uriBuilder);
         Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
         Assertions.assertNotNull(response.getBody());
-        AuthorDTO dto = (AuthorDTO) response.getBody();
+        PublisherDTO dto = (PublisherDTO) response.getBody();
         Assertions.assertEquals(body.name(), dto.name());
+        Assertions.assertEquals(body.country(), dto.country());
     }
 
     @Test
-    @DisplayName("Find all authors when success")
-    void findAllAuthorsWhenSuccess() {
-        String authorName = AuthorCreator.createAuthorToBeSaved().getName();
+    @DisplayName("Find all publishers when success")
+    void findAllPublisherWhenSuccess() {
+        String publisherName = PublisherCreator.createPublisherToBeSaved().getName();
         Pageable pageable = PageRequest.of(0, 10);
         ResponseEntity<?> response = controller.findAll(pageable);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -70,12 +72,12 @@ class AuthorControllerTest {
         Page<AuthorDTO> dtosPages = (Page<AuthorDTO>) response.getBody();
         Assertions.assertFalse(dtosPages.isEmpty());
         Assertions.assertEquals(1, dtosPages.getTotalElements());
-        Assertions.assertEquals(authorName, dtosPages.getContent().get(0).name());
+        Assertions.assertEquals(publisherName, dtosPages.getContent().get(0).name());
     }
 
     @Test
-    @DisplayName("Find author by id when success")
-    void findAuthorByIdWhenSuccess() {
+    @DisplayName("Find publisher by id when success")
+    void findPublisherByIdWhenSuccess() {
         Long id = 1L;
         ResponseEntity<?> response = controller.findById(id);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -83,8 +85,8 @@ class AuthorControllerTest {
     }
 
     @Test
-    @DisplayName("Find author by id when not found")
-    void findAuthorByIdWhenNotFound() {
+    @DisplayName("Find publisher by id when not found")
+    void findPublisherByIdWhenNotFound() {
         Long id = 1L;
         BDDMockito.when(service.findById(ArgumentMatchers.anyLong()))
                 .thenThrow(new RuntimeException("Author with id " + id + " not found"));
@@ -97,18 +99,18 @@ class AuthorControllerTest {
     }
 
     @Test
-    @DisplayName("Update author when success")
-    void updateAuthorWhenSuccess() {
+    @DisplayName("Update publisher when success")
+    void updatePublisherWhenSuccess() {
         Long id = 1L;
-        AuthorBody body = AuthorCreator.createAuthorBody();
+        PublisherBody body = PublisherCreator.createPublisherBody();
         ResponseEntity<?> response = controller.update(id, body);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertNotNull(response.getBody());
     }
 
     @Test
-    @DisplayName("Delete author when success")
-    void deleteAuthorWhenSuccess() {
+    @DisplayName("Delete publisher when success")
+    void deletePublisherWhenSuccess() {
         Long id = 1L;
         ResponseEntity<?> response = controller.delete(id);
         Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());

@@ -3,10 +3,7 @@ package com.mm.library.domain.publisher;
 import com.mm.library.common.AbstractEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -14,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Table(name = "publishers")
 @Entity(name = "Publisher")
+@Builder
 public class Publisher extends AbstractEntity {
     private String name;
     private String country;
