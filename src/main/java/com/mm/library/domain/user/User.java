@@ -24,6 +24,8 @@ public class User extends AbstractEntity implements UserDetails {
 
     private String username;
     private String password;
+    private String name;
+    private String email;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
