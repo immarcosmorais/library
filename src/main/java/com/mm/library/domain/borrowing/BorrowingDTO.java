@@ -1,5 +1,6 @@
 package com.mm.library.domain.borrowing;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public record BorrowingDTO(
@@ -10,8 +11,8 @@ public record BorrowingDTO(
         Date expectedReturnDate,
         BorrowingStatus status,
         Date returnDate,
-        Date createdAt,
-        Date updatedAt
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {
     public BorrowingDTO(Borrowing borrowing) {
         this(

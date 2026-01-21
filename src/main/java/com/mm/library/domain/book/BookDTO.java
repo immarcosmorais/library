@@ -1,5 +1,6 @@
 package com.mm.library.domain.book;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public record BookDTO(
@@ -10,8 +11,8 @@ public record BookDTO(
         String publisherName,
         String authorName,
         BookStatus status,
-        Date createdAt,
-        Date updatedAt
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {
     public BookDTO(Book book) {
         this(

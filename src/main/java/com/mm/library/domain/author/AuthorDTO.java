@@ -1,13 +1,14 @@
 package com.mm.library.domain.author;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public record AuthorDTO(
         Long id,
         String name,
         Date birthDate,
-        Date createdAt,
-        Date updatedAt
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {
     public AuthorDTO(Author author) {
         this(

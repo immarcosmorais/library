@@ -1,14 +1,14 @@
 package com.mm.library.domain.reader;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public record ReaderDTO(
         Long id,
         String name,
         String email,
         String phone,
-        Date createdAt,
-        Date updatedAt
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {
     public ReaderDTO(Reader reader) {
         this(

@@ -1,13 +1,13 @@
 package com.mm.library.domain.publisher;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public record PublisherDTO(
         Long id,
         String name,
         String country,
-        Date createdAt,
-        Date updatedAt
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {
     public PublisherDTO(Publisher publisher) {
         this(

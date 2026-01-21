@@ -1,5 +1,6 @@
 package com.mm.library.domain.reservation;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public record ReservationDTO(
@@ -8,8 +9,8 @@ public record ReservationDTO(
         String readerName,
         Date deadline,
         ReservationStatus status,
-        Date createdAt,
-        Date updatedAt
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {
     public ReservationDTO(Reservation reservation) {
         this(
