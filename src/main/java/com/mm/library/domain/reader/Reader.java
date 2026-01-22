@@ -18,10 +18,6 @@ import lombok.Setter;
 @Entity(name = "Reader")
 public class Reader extends AbstractEntity {
 
-    // Override the ID field from AbstractEntity
-    @Id
-    private Long id; // Remove @GeneratedValue annotation
-
     @Column(unique = true, nullable = false)
     private String name;
     @Column(unique = true, nullable = false)
