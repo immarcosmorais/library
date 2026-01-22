@@ -1,6 +1,8 @@
 package com.mm.library.domain.reader;
 
 import com.mm.library.common.BaseCRUDService;
+import com.mm.library.common.Validates;
+import com.mm.library.domain.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -8,16 +10,32 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class ReaderService implements BaseCRUDService<Reader, ReaderBody> {
 
     @Autowired
     private ReaderRepository readerRepository;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    List<Validates<Reader>> validateReaders;
+
     @Override
     @Transactional
     public Reader save(ReaderBody readerBody) {
+        Reader readerToCheck = this.readerRepository.findByEmailOrNameOrPhone(
+                readerBody.email(),
+                readerBody.name(),
+                readerBody.phone()
+        ).orElse(null);
+        validateReaders.forEach(v -> v.validate(readerToCheck));
+        Long id = this.userService.createUserForReader(readerBody);
         Reader readerToBeSaved = new Reader(readerBody);
+        readerToBeSaved.setId(id);
         return this.readerRepository.save(readerToBeSaved);
     }
 

@@ -1,6 +1,7 @@
 package com.mm.library.domain.user;
 
 import com.mm.library.common.AbstractEntity;
+import com.mm.library.domain.reader.ReaderBody;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,14 @@ public class User extends AbstractEntity implements UserDetails {
     private String password;
     private String name;
     private String email;
+
+    public User(ReaderBody readerBody) {
+        setDeleted(false);
+        this.username = readerBody.email();
+        this.password = readerBody.password();
+        this.name = readerBody.name();
+        this.email = readerBody.email();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

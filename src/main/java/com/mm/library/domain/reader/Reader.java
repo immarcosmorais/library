@@ -1,7 +1,9 @@
 package com.mm.library.domain.reader;
 
 import com.mm.library.common.AbstractEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,8 +17,16 @@ import lombok.Setter;
 @Table(name = "readers")
 @Entity(name = "Reader")
 public class Reader extends AbstractEntity {
+
+    // Override the ID field from AbstractEntity
+    @Id
+    private Long id; // Remove @GeneratedValue annotation
+
+    @Column(unique = true, nullable = false)
     private String name;
+    @Column(unique = true, nullable = false)
     private String email;
+    @Column(unique = true, nullable = false)
     private String phone;
 
     public Reader(ReaderBody body) {

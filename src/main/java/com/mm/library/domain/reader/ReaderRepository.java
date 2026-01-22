@@ -1,5 +1,7 @@
 package com.mm.library.domain.reader;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +16,9 @@ public interface ReaderRepository extends JpaRepository<Reader, Long> {
 
     Optional<Reader> findByIdAndDeletedFalse(Long Id);
 
+    Optional<Reader> findByEmail(@Email String email);
+
+    Optional<Reader> findByEmailAndNameAndPhone(@Email String email, @NotBlank String name, @NotBlank String phone);
+
+    Optional<Reader> findByEmailOrNameOrPhone(@Email String email, @NotBlank String name, @NotBlank String phone);
 }

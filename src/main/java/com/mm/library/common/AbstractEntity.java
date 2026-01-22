@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public abstract class AbstractEntity {
 
     @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "created_at")
     private LocalDateTime createdAt;

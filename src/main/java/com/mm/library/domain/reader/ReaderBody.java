@@ -9,7 +9,9 @@ public record ReaderBody(
         @Email
         String email,
         @NotBlank
-        String phone
+        String phone,
+        @NotBlank
+        String password
 ) {
 
 }
