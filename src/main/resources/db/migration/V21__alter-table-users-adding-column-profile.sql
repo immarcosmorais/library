@@ -1,0 +1,10 @@
+ALTER TABLE users
+  ADD COLUMN profile VARCHAR(50) NOT NULL DEFAULT 'LIBRARIAN';
+
+UPDATE users
+    SET profile = 'LIBRARIAN'
+    WHERE profile IS NULL;
+
+ALTER TABLE users
+  ADD CONSTRAINT chk_users_profile
+  CHECK (profile IN ('LIBRARIAN','READER', 'ADMIN'));

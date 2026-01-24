@@ -3,6 +3,8 @@ package com.mm.library.domain.user;
 import com.mm.library.common.AbstractEntity;
 import com.mm.library.domain.reader.ReaderBody;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +15,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -27,6 +30,8 @@ public class User extends AbstractEntity implements UserDetails {
     private String password;
     private String name;
     private String email;
+    @Enumerated(EnumType.STRING)
+    private Profile profile;
 
     public User(ReaderBody readerBody) {
         setDeleted(false);
@@ -34,11 +39,12 @@ public class User extends AbstractEntity implements UserDetails {
         this.password = readerBody.password();
         this.name = readerBody.name();
         this.email = readerBody.email();
+        this.profile = Profile.READER;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + profile.name()));
     }
 
     @Override
