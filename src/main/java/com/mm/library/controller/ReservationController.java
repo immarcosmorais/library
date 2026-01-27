@@ -1,18 +1,17 @@
 package com.mm.library.controller;
 
-import com.mm.library.common.BaseCRUDController;
 import com.mm.library.domain.reservation.ReservationBody;
 import com.mm.library.domain.reservation.ReservationDTO;
 import com.mm.library.domain.reservation.ReservationService;
+import com.mm.library.domain.user.User;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -20,35 +19,35 @@ import java.net.URI;
 @RestController
 @RequestMapping("reservations")
 @SecurityRequirement(name = "bearer-key")
-public class ReservationController implements BaseCRUDController<ReservationDTO, ReservationBody> {
+public class ReservationController {
 
     @Autowired
     ReservationService reservationService;
 
-    @Override
-    public ResponseEntity save(ReservationBody reservationBody, UriComponentsBuilder uriBuilder) {
+    @PostMapping
+    public ResponseEntity save(@RequestBody @Valid ReservationBody reservationBody, UriComponentsBuilder uriBuilder) {
         ReservationDTO reservationDTO = new ReservationDTO(this.reservationService.save(reservationBody));
         URI uri = uriBuilder.path("/reservations/{id}").buildAndExpand(reservationDTO.id()).toUri();
         return ResponseEntity.created(uri).body(reservationDTO);
     }
 
-    @Override
-    public ResponseEntity<Page<ReservationDTO>> findAll(Pageable pageable) {
-        return ResponseEntity.ok(this.reservationService.findAll(pageable).map(ReservationDTO::new));
+    @GetMapping
+    public ResponseEntity<Page<ReservationDTO>> findAll(Pageable pageable, @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(this.reservationService.findAll(pageable, user).map(ReservationDTO::new));
     }
 
-    @Override
-    public ResponseEntity findById(Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity findById(@PathVariable Long id) {
         return ResponseEntity.ok(new ReservationDTO(this.reservationService.findById(id)));
     }
 
-    @Override
-    public ResponseEntity update(Long id, ReservationBody reservationBody) {
+    @PutMapping("/{id}")
+    public ResponseEntity update(@PathVariable Long id, @RequestBody @Valid ReservationBody reservationBody) {
         return ResponseEntity.ok(new ReservationDTO(this.reservationService.update(id, reservationBody)));
     }
 
-    @Override
-    public ResponseEntity delete(Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity delete(@PathVariable Long id) {
         this.reservationService.delete(id);
         return ResponseEntity.noContent().build();
     }

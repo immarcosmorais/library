@@ -9,31 +9,27 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class AuthorService implements BaseCRUDService<Author, AuthorBody> {
+public class AuthorService  {
 
     @Autowired
     AuthorRepository authorRepository;
 
-    @Override
     @Transactional
     public Author save(AuthorBody authorBody) {
         Author authorToBeSaved = new Author(authorBody);
         return authorRepository.save(authorToBeSaved);
     }
 
-    @Override
     @Transactional(readOnly = true)
     public Page<Author> findAll(Pageable pageable) {
         return authorRepository.findAllByDeletedFalse(pageable);
     }
 
-    @Override
     @Transactional(readOnly = true)
     public Author findById(Long id) {
         return this.findByIdOrThrowException(id);
     }
 
-    @Override
     @Transactional
     public Author update(Long id, AuthorBody authorBody) {
         Author author = this.findById(id);
@@ -41,7 +37,6 @@ public class AuthorService implements BaseCRUDService<Author, AuthorBody> {
         return authorRepository.save(author);
     }
 
-    @Override
     @Transactional
     public void delete(Long id) {
         Author authorToBeDeleted = authorRepository.getReferenceById(id);
@@ -52,7 +47,6 @@ public class AuthorService implements BaseCRUDService<Author, AuthorBody> {
         authorRepository.save(authorToBeDeleted);
     }
 
-    @Override
     @Transactional
     public void destroy(Long id) {
         this.authorRepository.delete(this.authorRepository.getReferenceById(id));

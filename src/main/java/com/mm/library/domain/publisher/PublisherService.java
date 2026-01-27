@@ -9,31 +9,27 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class PublisherService implements BaseCRUDService<Publisher, PublisherBody> {
+public class PublisherService {
 
     @Autowired
     PublisherRepository publisherRepository;
 
-    @Override
     @Transactional
     public Publisher save(PublisherBody publisherBody) {
         Publisher publisherToBeSaved = new Publisher(publisherBody);
         return publisherRepository.save(publisherToBeSaved);
     }
 
-    @Override
     @Transactional(readOnly = true)
     public Page<Publisher> findAll(Pageable pageable) {
         return publisherRepository.findAllByDeletedFalse(pageable);
     }
 
-    @Override
     @Transactional(readOnly = true)
     public Publisher findById(Long id) {
         return this.findByIdOrThrowException(id);
     }
 
-    @Override
     @Transactional
     public Publisher update(Long id, PublisherBody publisherBody) {
         Publisher publisherToBeUpdated = this.findById(id);
@@ -41,7 +37,6 @@ public class PublisherService implements BaseCRUDService<Publisher, PublisherBod
         return publisherRepository.save(publisherToBeUpdated);
     }
 
-    @Override
     @Transactional
     public void delete(Long id) {
         Publisher publisherToBeDeleted = publisherRepository.getReferenceById(id);
@@ -50,7 +45,6 @@ public class PublisherService implements BaseCRUDService<Publisher, PublisherBod
     }
 
 
-    @Override
     @Transactional
     public void destroy(Long id) {
         this.publisherRepository.delete(this.publisherRepository.getReferenceById(id));

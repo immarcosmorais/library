@@ -17,10 +17,10 @@ import java.util.List;
 @RestControllerAdvice
 public class ErrorsExceptionHandler {
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Object> handle404Error() {
-        return ResponseEntity.notFound().build();
-    }
+//    @ExceptionHandler(EntityNotFoundException.class)
+//    public ResponseEntity<Object> handle404Error() {
+//        return ResponseEntity.notFound().build();
+//    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity handle400Error(MethodArgumentNotValidException ex) {

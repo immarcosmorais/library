@@ -1,6 +1,5 @@
 package com.mm.library.domain.reservation;
 
-import com.mm.library.common.BaseCRUDService;
 import com.mm.library.common.Validates;
 import com.mm.library.domain.book.Book;
 import com.mm.library.domain.book.BookService;
@@ -10,6 +9,8 @@ import com.mm.library.domain.reader.Reader;
 import com.mm.library.domain.reader.ReaderService;
 import com.mm.library.domain.reservation.validations.ValidateClosedReservations;
 import com.mm.library.domain.reservation.validations.ValidateDeadline;
+import com.mm.library.domain.user.Profile;
+import com.mm.library.domain.user.User;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class ReservationService implements BaseCRUDService<Reservation, ReservationBody> {
+public class ReservationService  {
 
     @Autowired
     ReservationRepository reservationRepository;
@@ -39,15 +40,14 @@ public class ReservationService implements BaseCRUDService<Reservation, Reservat
     List<Validates<Reservation>> validateReservations;
 
     @Autowired
-    List<Validates<Book>> validateBooks;
+    ValidateAvailableBooks validateBooks;
 
 
-    @Override
     @Transactional
     public Reservation save(ReservationBody body) {
         Book book = this.bookService.findById(body.bookId());
         Reader reader = this.readerService.findById(body.readerId());
-        validateBooks.forEach(v -> v.validate(book));
+        validateBooks.validate(book);
         if (body.deadline() == null) {
             Date deadLine = Date.from(Instant.now().plus(3, ChronoUnit.DAYS));
             body = new ReservationBody(body.bookId(), body.readerId(), body.status(), deadLine);
@@ -58,19 +58,20 @@ public class ReservationService implements BaseCRUDService<Reservation, Reservat
         return this.reservationRepository.save(reservationToBeSaved);
     }
 
-    @Override
     @Transactional(readOnly = true)
-    public Page<Reservation> findAll(Pageable pageable) {
+    public Page<Reservation> findAll(Pageable pageable, User user) {
+        if (user.getProfile() == Profile.READER){
+            Reader reader = readerService.findByEmail(user.getUsername());
+            return this.reservationRepository.findAllByReaderIdAndDeletedFalse(reader.getId(), pageable);
+        }
         return this.reservationRepository.findAllByDeletedFalse(pageable);
     }
 
-    @Override
     @Transactional(readOnly = true)
     public Reservation findById(Long id) {
         return this.findByIdOrThrowException(id);
     }
 
-    @Override
     @Transactional
     public Reservation update(Long id, ReservationBody body) {
         Reservation reservationToBeUpdated = this.findById(id);
@@ -90,7 +91,6 @@ public class ReservationService implements BaseCRUDService<Reservation, Reservat
         return this.reservationRepository.save(reservationToBeUpdated);
     }
 
-    @Override
     @Transactional
     public void delete(Long id) {
         Reservation reservationToBeDeleted = this.reservationRepository.getReferenceById(id);
@@ -100,7 +100,6 @@ public class ReservationService implements BaseCRUDService<Reservation, Reservat
         this.reservationRepository.save(reservationToBeDeleted);
     }
 
-    @Override
     @Transactional
     public void destroy(Long id) {
         this.reservationRepository.delete(this.reservationRepository.getReferenceById(id));

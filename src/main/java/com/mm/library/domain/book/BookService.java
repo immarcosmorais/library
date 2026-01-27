@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class BookService implements BaseCRUDService<Book, BookBody> {
+public class BookService  {
 
     @Autowired
     private BookRepository bookRepository;
@@ -24,7 +24,6 @@ public class BookService implements BaseCRUDService<Book, BookBody> {
     @Autowired
     private AuthorService authorService;
 
-    @Override
     @Transactional
     public Book save(BookBody bookBody) {
         Publisher publisher = this.publisherService.findById(bookBody.publisherId());
@@ -33,19 +32,16 @@ public class BookService implements BaseCRUDService<Book, BookBody> {
         return this.bookRepository.save(bookToBeSaved);
     }
 
-    @Override
     @Transactional(readOnly = true)
     public Page<Book> findAll(Pageable pageable) {
         return this.bookRepository.findAllByDeletedFalse(pageable);
     }
 
-    @Override
     @Transactional(readOnly = true)
     public Book findById(Long id) {
         return this.findByIdOrThrowException(id);
     }
 
-    @Override
     @Transactional
     public Book update(Long id, BookBody bookBody) {
         Book bookToBeUpdated = this.findById(id);
@@ -55,7 +51,6 @@ public class BookService implements BaseCRUDService<Book, BookBody> {
         return this.bookRepository.save(bookToBeUpdated);
     }
 
-    @Override
     @Transactional
     public void delete(Long id) {
         Book bookToBeDeleted = this.bookRepository.getReferenceById(id);
@@ -63,7 +58,6 @@ public class BookService implements BaseCRUDService<Book, BookBody> {
         this.bookRepository.save(bookToBeDeleted);
     }
 
-    @Override
     @Transactional
     public void destroy(Long id) {
         this.bookRepository.delete(this.bookRepository.getReferenceById(id));

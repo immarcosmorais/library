@@ -1,6 +1,5 @@
 package com.mm.library.domain.borrowing;
 
-import com.mm.library.common.BaseCRUDService;
 import com.mm.library.common.Validates;
 import com.mm.library.domain.book.Book;
 import com.mm.library.domain.book.BookService;
@@ -11,6 +10,8 @@ import com.mm.library.domain.reader.ReaderService;
 import com.mm.library.domain.reservation.Reservation;
 import com.mm.library.domain.reservation.ReservationService;
 import com.mm.library.domain.reservation.ReservationStatus;
+import com.mm.library.domain.user.Profile;
+import com.mm.library.domain.user.User;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class BorrowingService implements BaseCRUDService<Borrowing, BorrowingBody> {
+public class BorrowingService  {
 
     @Autowired
     BorrowingRepository borrowingRepository;
@@ -49,7 +50,6 @@ public class BorrowingService implements BaseCRUDService<Borrowing, BorrowingBod
     List<Validates<Book>> validateBooks;
 
 
-    @Override
     public Borrowing save(BorrowingBody body) {
         Book book = this.bookService.findById(body.bookId());
         validateBooks.forEach(v -> v.validate(book));
@@ -63,17 +63,18 @@ public class BorrowingService implements BaseCRUDService<Borrowing, BorrowingBod
         return this.borrowingRepository.save(borrowingToBeSaved);
     }
 
-    @Override
-    public Page<Borrowing> findAll(Pageable pageable) {
+    public Page<Borrowing> findAll(Pageable pageable, User user) {
+        if (user.getProfile() == Profile.READER){
+            Reader reader = readerService.findByEmail(user.getUsername());
+            return this.borrowingRepository.findAllByReaderIdAndDeletedFalse(reader.getId(), pageable);
+        }
         return this.borrowingRepository.findAllByDeletedFalse(pageable);
     }
 
-    @Override
     public Borrowing findById(Long id) {
         return this.findByIdOrThrowException(id);
     }
 
-    @Override
     public Borrowing update(Long id, BorrowingBody body) {
         Borrowing borrowingToBeUpdated = this.findById(id);
         new ValidateClosedBorrowings().validate(borrowingToBeUpdated);
@@ -91,7 +92,6 @@ public class BorrowingService implements BaseCRUDService<Borrowing, BorrowingBod
         return this.borrowingRepository.save(borrowingToBeSaved);
     }
 
-    @Override
     @Transactional
     public void delete(Long id) {
         Borrowing borrowingToBeDeleted = this.borrowingRepository.getReferenceById(id);
@@ -100,7 +100,6 @@ public class BorrowingService implements BaseCRUDService<Borrowing, BorrowingBod
         this.borrowingRepository.save(borrowingToBeDeleted);
     }
 
-    @Override
     @Transactional
     public void destroy(Long id) {
         this.borrowingRepository.delete(this.borrowingRepository.getReferenceById(id));

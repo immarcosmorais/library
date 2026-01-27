@@ -12,6 +12,8 @@ public interface BorrowingRepository extends JpaRepository<Borrowing, Long> {
 
     Page<Borrowing> findAllByDeletedFalse(Pageable pageable);
 
+    Page<Borrowing> findAllByReaderIdAndDeletedFalse(Long id, Pageable pageable);
+
     Optional<Borrowing> findByIdAndDeletedFalse(Long Id);
 
     Optional<Borrowing> findByBookIdAndDeletedFalse(Long bookId);

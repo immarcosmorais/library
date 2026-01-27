@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class ReaderService implements BaseCRUDService<Reader, ReaderBody> {
+public class ReaderService  {
 
     @Autowired
     private ReaderRepository readerRepository;
@@ -25,7 +25,6 @@ public class ReaderService implements BaseCRUDService<Reader, ReaderBody> {
     @Autowired
     List<Validates<Reader>> validateReaders;
 
-    @Override
     @Transactional
     public Reader save(ReaderBody readerBody) {
         Reader readerToCheck = this.readerRepository.findByEmailOrNameOrPhone(
@@ -39,19 +38,16 @@ public class ReaderService implements BaseCRUDService<Reader, ReaderBody> {
         return this.readerRepository.save(readerToBeSaved);
     }
 
-    @Override
     @Transactional(readOnly = true)
     public Page<Reader> findAll(Pageable pageable) {
         return this.readerRepository.findAllByDeletedFalse(pageable);
     }
 
-    @Override
     @Transactional(readOnly = true)
     public Reader findById(Long id) {
         return this.findByIdOrThrowException(id);
     }
 
-    @Override
     @Transactional
     public Reader update(Long id, ReaderBody readerBody) {
         Reader readerToBeUpdated = this.findById(id);
@@ -59,7 +55,6 @@ public class ReaderService implements BaseCRUDService<Reader, ReaderBody> {
         return this.readerRepository.save(readerToBeUpdated);
     }
 
-    @Override
     @Transactional
     public void delete(Long id) {
         Reader readerToBeDeleted = this.readerRepository.getReferenceById(id);
@@ -72,7 +67,6 @@ public class ReaderService implements BaseCRUDService<Reader, ReaderBody> {
         }
     }
 
-    @Override
     @Transactional
     public void destroy(Long id) {
         this.readerRepository.delete(this.readerRepository.getReferenceById(id));
@@ -81,6 +75,13 @@ public class ReaderService implements BaseCRUDService<Reader, ReaderBody> {
     private Reader findByIdOrThrowException(Long id) {
         return this.readerRepository.findByIdAndDeletedFalse(id).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Reader with id %d not found", id))
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public Reader findByEmail(String username) {
+        return this.readerRepository.findByEmailAndDeletedFalse(username).orElseThrow(
+                () -> new EntityNotFoundException(String.format("Reader with email %s not found", username))
         );
     }
 }

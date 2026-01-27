@@ -15,4 +15,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     Optional<Reservation> findByIdAndDeletedFalse(Long Id);
 
     Optional<Reservation> findByReaderIdAndBookIdAndDeletedFalseAndStatus(Long readerId, Long bookId, ReservationStatus status);
+
+    Page<Reservation> findAllByReaderIdAndDeletedFalse(Long id, Pageable pageable);
 }

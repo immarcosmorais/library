@@ -27,7 +27,8 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return this.userRepository.findByUsername(username);
+//        return this.userRepository.findByEmailAndDeletedFalse(username);
+        return this.userRepository.findByUsernameAndDeletedFalse(username);
     }
 
     public User createUserForReader(ReaderBody readerBody) {

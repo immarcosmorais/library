@@ -21,4 +21,6 @@ public interface ReaderRepository extends JpaRepository<Reader, Long> {
     Optional<Reader> findByEmailAndNameAndPhone(@Email String email, @NotBlank String name, @NotBlank String phone);
 
     Optional<Reader> findByEmailOrNameOrPhone(@Email String email, @NotBlank String name, @NotBlank String phone);
+
+    Optional<Reader> findByEmailAndDeletedFalse(String username);
 }
