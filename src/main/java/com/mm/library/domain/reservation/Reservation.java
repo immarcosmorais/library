@@ -19,10 +19,10 @@ import java.util.Date;
 @Entity(name = "Reservation")
 public class Reservation extends AbstractEntity {
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id", unique = true)
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "book_id")
     private Book book;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reader_id")
     private Reader reader;
     @Column(name = "deadline")

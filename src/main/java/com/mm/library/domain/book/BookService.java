@@ -1,6 +1,5 @@
 package com.mm.library.domain.book;
 
-import com.mm.library.common.BaseCRUDService;
 import com.mm.library.domain.author.Author;
 import com.mm.library.domain.author.AuthorService;
 import com.mm.library.domain.publisher.Publisher;
@@ -53,7 +52,7 @@ public class BookService  {
 
     @Transactional
     public void delete(Long id) {
-        Book bookToBeDeleted = this.bookRepository.getReferenceById(id);
+        Book bookToBeDeleted = this.findByIdOrThrowException(id);
         bookToBeDeleted.setDeleted(true);
         this.bookRepository.save(bookToBeDeleted);
     }

@@ -2,10 +2,7 @@ package com.mm.library.domain.user;
 
 import com.mm.library.common.AbstractEntity;
 import com.mm.library.domain.reader.ReaderBody;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 @Getter
 @Setter
@@ -26,9 +22,11 @@ import java.util.List;
 @Entity(name = "User")
 public class User extends AbstractEntity implements UserDetails {
 
+    @Column(unique = true, nullable = false)
     private String username;
     private String password;
     private String name;
+    @Column(unique = true, nullable = false)
     private String email;
     @Enumerated(EnumType.STRING)
     private Profile profile;

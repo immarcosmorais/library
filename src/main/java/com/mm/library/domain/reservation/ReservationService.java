@@ -105,7 +105,7 @@ public class ReservationService  {
         this.reservationRepository.delete(this.reservationRepository.getReferenceById(id));
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     private Reservation findByIdOrThrowException(Long id) {
         return this.reservationRepository.findByIdAndDeletedFalse(id).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Reservation with id %d not found", id))

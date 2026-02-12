@@ -19,6 +19,7 @@ import java.util.Date;
 @Entity(name = "Book")
 public class Book extends AbstractEntity {
     private String title;
+    @Column(unique = true, nullable = false)
     private String isbn;
     @Column(name = "publication_date")
     private Date publicationDate;

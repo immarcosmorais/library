@@ -1,7 +1,6 @@
 package com.mm.library.domain.reader;
 
-import com.mm.library.common.BaseCRUDService;
-import com.mm.library.common.Validates;
+import com.mm.library.domain.reader.validations.ValidateAlreadyExistingReader;
 import com.mm.library.domain.user.User;
 import com.mm.library.domain.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -10,8 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class ReaderService  {
@@ -22,18 +19,14 @@ public class ReaderService  {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    List<Validates<Reader>> validateReaders;
-
     @Transactional
     public Reader save(ReaderBody readerBody) {
-        Reader readerToCheck = this.readerRepository.findByEmailOrNameOrPhone(
+        Reader readerToCheck = this.readerRepository.findByEmailOrPhone(
                 readerBody.email(),
-                readerBody.name(),
                 readerBody.phone()
         ).orElse(null);
-        validateReaders.forEach(v -> v.validate(readerToCheck));
-        this.userService.createUserForReader(readerBody);
+        new ValidateAlreadyExistingReader().validate(readerToCheck);
+        this.userService.create(readerBody);
         Reader readerToBeSaved = new Reader(readerBody);
         return this.readerRepository.save(readerToBeSaved);
     }
@@ -50,14 +43,15 @@ public class ReaderService  {
 
     @Transactional
     public Reader update(Long id, ReaderBody readerBody) {
-        Reader readerToBeUpdated = this.findById(id);
+        Reader readerToBeUpdated = this.findByIdOrThrowException(id);
         readerToBeUpdated.update(readerBody);
+        this.userService.update(readerBody);
         return this.readerRepository.save(readerToBeUpdated);
     }
 
     @Transactional
     public void delete(Long id) {
-        Reader readerToBeDeleted = this.readerRepository.getReferenceById(id);
+        Reader readerToBeDeleted = this.findByIdOrThrowException(id);
         readerToBeDeleted.setDeleted(true);
         this.readerRepository.save(readerToBeDeleted);
         User userToBeDeleted = this.userService.findByEmail(readerToBeDeleted.getEmail()).orElse(null);

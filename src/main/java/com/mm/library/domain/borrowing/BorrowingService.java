@@ -4,6 +4,7 @@ import com.mm.library.common.Validates;
 import com.mm.library.domain.book.Book;
 import com.mm.library.domain.book.BookService;
 import com.mm.library.domain.book.BookStatus;
+import com.mm.library.domain.book.validations.ValidateReservedBooks;
 import com.mm.library.domain.borrowing.validations.ValidateClosedBorrowings;
 import com.mm.library.domain.reader.Reader;
 import com.mm.library.domain.reader.ReaderService;
@@ -41,15 +42,9 @@ public class BorrowingService  {
     ReaderService readerService;
 
     @Autowired
-    List<Validates<Borrowing>> validateBorrowings;
-
-    @Autowired
-    List<Validates<Reservation>> validateReservations;
-
-    @Autowired
     List<Validates<Book>> validateBooks;
 
-
+    @Transactional
     public Borrowing save(BorrowingBody body) {
         Book book = this.bookService.findById(body.bookId());
         validateBooks.forEach(v -> v.validate(book));
@@ -63,6 +58,7 @@ public class BorrowingService  {
         return this.borrowingRepository.save(borrowingToBeSaved);
     }
 
+    @Transactional(readOnly = true)
     public Page<Borrowing> findAll(Pageable pageable, User user) {
         if (user.getProfile() == Profile.READER){
             Reader reader = readerService.findByEmail(user.getUsername());
@@ -71,10 +67,13 @@ public class BorrowingService  {
         return this.borrowingRepository.findAllByDeletedFalse(pageable);
     }
 
+
+    @Transactional(readOnly = true)
     public Borrowing findById(Long id) {
         return this.findByIdOrThrowException(id);
     }
 
+    @Transactional
     public Borrowing update(Long id, BorrowingBody body) {
         Borrowing borrowingToBeUpdated = this.findById(id);
         new ValidateClosedBorrowings().validate(borrowingToBeUpdated);
@@ -111,13 +110,13 @@ public class BorrowingService  {
         );
     }
 
+    @Transactional
     public Borrowing byReservation(Long reservationId) {
         Reservation reservation = this.reservationService.findById(reservationId);
-        validateReservations.forEach(v -> v.validate(reservation));
         Book book = reservation.getBook();
         Reader reader = reservation.getReader();
-        validateBooks.forEach(v -> v.validate(book));
-        this.reservationService.updateReservationStatus(reservation.getId(), ReservationStatus.CLOSED);
+        new ValidateReservedBooks().validate(book);
+        this.reservationService.updateReservationStatus(reservation.getId(), ReservationStatus.BORROWED);
         Date expectedReturnDate = Date.from(Instant.now().plus(7, ChronoUnit.DAYS));
         BorrowingBody body = new BorrowingBody(book.getId(), reader.getId(), BorrowingStatus.OPENED, expectedReturnDate);
         this.bookService.updateBookStatus(book.getId(), BookStatus.BORROWED);
@@ -126,6 +125,7 @@ public class BorrowingService  {
         return this.borrowingRepository.save(borrowingToBeSaved);
     }
 
+    @Transactional
     public Borrowing close(Long id) {
         Borrowing borrowing = this.findById(id);
         if (borrowing.getStatus() == BorrowingStatus.OPENED) {
@@ -137,6 +137,7 @@ public class BorrowingService  {
         return borrowing;
     }
 
+    @Transactional
     public Borrowing returnBook(Long bookId) {
         Borrowing borrowing = this.borrowingRepository.findByBookIdAndDeletedFalse(bookId).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Didn't found any borrowing for book with id $d", bookId))

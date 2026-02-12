@@ -1,6 +1,5 @@
 package com.mm.library.domain.author;
 
-import com.mm.library.common.BaseCRUDService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,10 +38,7 @@ public class AuthorService  {
 
     @Transactional
     public void delete(Long id) {
-        Author authorToBeDeleted = authorRepository.getReferenceById(id);
-        if (authorToBeDeleted.isDeleted()) {
-            throw new EntityNotFoundException(String.format("Author with id %d not found", id));
-        }
+        Author authorToBeDeleted = this.findByIdOrThrowException(id);
         authorToBeDeleted.setDeleted(true);
         authorRepository.save(authorToBeDeleted);
     }
