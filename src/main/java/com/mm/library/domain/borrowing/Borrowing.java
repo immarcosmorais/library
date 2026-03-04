@@ -19,8 +19,8 @@ import java.util.Date;
 @Table(name = "borrowings")
 @Entity(name = "Borrowing")
 public class Borrowing extends AbstractEntity {
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id", unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id")
     private Book book;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reader_id")

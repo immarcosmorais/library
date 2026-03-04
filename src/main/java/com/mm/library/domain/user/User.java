@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -30,6 +31,9 @@ public class User extends AbstractEntity implements UserDetails {
     private String email;
     @Enumerated(EnumType.STRING)
     private Profile profile;
+    private String token;
+    @Column(name = "token_expiration")
+    private LocalDateTime tokenExpiration;
 
     public User(ReaderBody readerBody) {
         setDeleted(false);

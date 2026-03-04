@@ -116,7 +116,7 @@ public class BorrowingService  {
         Book book = reservation.getBook();
         Reader reader = reservation.getReader();
         new ValidateReservedBooks().validate(book);
-        this.reservationService.updateReservationStatus(reservation.getId(), ReservationStatus.BORROWED);
+        this.reservationService.updateReservationStatus(reservation.getId(), ReservationStatus.CLOSED);
         Date expectedReturnDate = Date.from(Instant.now().plus(7, ChronoUnit.DAYS));
         BorrowingBody body = new BorrowingBody(book.getId(), reader.getId(), BorrowingStatus.OPENED, expectedReturnDate);
         this.bookService.updateBookStatus(book.getId(), BookStatus.BORROWED);
@@ -129,6 +129,10 @@ public class BorrowingService  {
     public Borrowing close(Long id) {
         Borrowing borrowing = this.findById(id);
         if (borrowing.getStatus() == BorrowingStatus.OPENED) {
+//            Reservation reservation = borrowing.getReservation();
+//            if (reservation != null) {
+//                this.reservationService.updateReservationStatus(reservation.getId(), ReservationStatus.CLOSED);
+//            }
             this.bookService.updateBookStatus(borrowing.getBook().getId(), BookStatus.AVAILABLE);
             borrowing.setStatus(BorrowingStatus.CLOSED);
             borrowing.setReturnDate(new Date());

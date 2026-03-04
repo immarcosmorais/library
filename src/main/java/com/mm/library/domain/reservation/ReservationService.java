@@ -122,7 +122,7 @@ public class ReservationService  {
 
     @Transactional
     public void updateReservationStatus(Long id, ReservationStatus reservationStatus) {
-        Reservation reservation = this.reservationRepository.getReferenceById(id);
+        Reservation reservation = this.findById(id);
         reservation.setStatus(reservationStatus);
         this.reservationRepository.save(reservation);
     }
